@@ -578,7 +578,7 @@ void CAppParcial2::moveCamera(float direction)
 		getOpenGLRenderer()->moveCamera(direction);
 	}
 }
-
+ 
 /* */
 void CAppParcial2::executeMenuAction()
 {

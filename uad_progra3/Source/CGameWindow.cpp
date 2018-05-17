@@ -226,7 +226,9 @@ void CGameWindow::mainLoop(void *appPointer)
 	LARGE_INTEGER li;
 
 	vector<float> ms_Frame;
-	
+	vector<float> delta_input;
+	vector<float> delta_update;
+	vector<float> delta_render;
 	
 
 	if (m_Window == NULL || appPointer == NULL || m_ReferenceRenderer == NULL)
@@ -266,6 +268,7 @@ void CGameWindow::mainLoop(void *appPointer)
 		QueryPerformanceCounter(&li);
 		current_time_input = double(li.QuadPart - CounterStart) / PCFreq;
 		delta_time_input = current_time_input - last_time_input;
+		delta_input.push_back(delta_time_input);
 
 		/* Time-based animation using a high-performance counter */
 		// Good example of frame-based animation vs time-based animation: http://blog.sklambert.com/using-time-based-animation-implement/
@@ -320,6 +323,7 @@ void CGameWindow::mainLoop(void *appPointer)
 			QueryPerformanceCounter(&li);
 			current_time_update = double(li.QuadPart - CounterStart) / PCFreq;
 			delta_time_update = current_time_update - last_time_update;
+			delta_update.push_back(delta_time_update);
 			
 
 		}
@@ -334,16 +338,21 @@ void CGameWindow::mainLoop(void *appPointer)
 		QueryPerformanceCounter(&li);
 		current_time_render = double(li.QuadPart - CounterStart) / PCFreq;
 		delta_time_render = current_time_render - last_time_render;
+		delta_render.push_back(delta_time_render);
 
 			// Calculate FPS
 			one_second += delta_time;
 			if (one_second > 1000.0)
 			{
 				float ms_Totales = 0;
+				float ms_Totales_input = 0;
+				float ms_Totales_update = 0;
+				float ms_Totales_render = 0;
 				for (int i = 0; i < ms_Frame.size(); i++)
 				{
 					ms_Totales += ms_Frame[i];
 				}
+
 				ms_Totales = ms_Totales / numFramesRendered;
 				fps = (numFramesRendered / (one_second / 1000.0));
 				one_second -= 1000.0;
@@ -351,17 +360,36 @@ void CGameWindow::mainLoop(void *appPointer)
 				cout << "Ms/fps:  " << ms_Totales << endl;
 				numFramesRendered = 0;
 				ms_Frame.clear();
-				if (delta_time_input > delta_time_update && delta_time_input > delta_time_render)
+
+				for (int i = 0; i < delta_input.size(); i++)
 				{
-					cout << "El que mas tardo fue input con: " << delta_time_input << endl;
+					ms_Totales_input += delta_input[i];
 				}
-				else if (delta_time_update > delta_time_input && delta_time_update > delta_time_render)
+				ms_Totales_input = ms_Totales_input / delta_input.size();
+
+				for (int i = 0; i < delta_update.size(); i++)
 				{
-					cout << "El que mas tardo fue update con: " << delta_time_update << endl;
+					ms_Totales_update += delta_update[i];
 				}
-				else if (delta_time_render > delta_time_input && delta_time_render > delta_time_update)
+				ms_Totales_update = ms_Totales_update / delta_update.size();
+
+				for (int i = 0; i < delta_render.size(); i++)
 				{
-					cout << "El que mas tardo fue render con: " << delta_time_render << endl;
+					ms_Totales_render += delta_render[i];
+				}
+				ms_Totales_render = ms_Totales_render / delta_render.size();
+
+				if (ms_Totales_input > ms_Totales_update && ms_Totales_input > ms_Totales_render)
+				{
+					cout << "El que mas tardo fue input con: " << ms_Totales_input << endl;
+				}
+				else if (ms_Totales_update > ms_Totales_input && ms_Totales_update > ms_Totales_render)
+				{
+					cout << "El que mas tardo fue update con: " << ms_Totales_update << endl;
+				}
+				else if (ms_Totales_render > ms_Totales_input && ms_Totales_render > ms_Totales_update)
+				{
+					cout << "El que mas tardo fue render con: " << ms_Totales_render << endl;
 				}
 			}
 
