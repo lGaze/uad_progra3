@@ -217,13 +217,17 @@ void CGameWindow::mainLoop(void *appPointer)
 	double last_time = 0;
 	double dt = 1000 / 60;  // constant dt step of 1 frame every 60 seconds
 	double accumulator = 0;
-	double current_time, delta_time, one_second = 0;
+	double current_time, delta_time, last_time_update, delta_time_update, current_time_update, one_second = 0;
 	double PCFreq = 0.0;
 	double fps = 0.0;
 	__int64 CounterStart = 0;
 	int numFramesRendered = 0;
 	float deltaCursorPosX = 0.0f, deltaCursorPosY = 0.0f;
 	LARGE_INTEGER li;
+
+	vector<float> ms_Frame;
+	
+	
 
 	if (m_Window == NULL || appPointer == NULL || m_ReferenceRenderer == NULL)
 		return;
@@ -252,8 +256,16 @@ void CGameWindow::mainLoop(void *appPointer)
 		/* Clear color and depth buffer */
 		m_ReferenceRenderer->clearScreen();
 
+		double last_time_input, current_time_input, delta_time_input = 0;
+		QueryPerformanceCounter(&li);
+		last_time_input = double(li.QuadPart - CounterStart) / PCFreq;
+
 		/* Process user input */
 		processInput(appPointer);
+
+		QueryPerformanceCounter(&li);
+		current_time_input = double(li.QuadPart - CounterStart) / PCFreq;
+		delta_time_input = current_time_input - last_time_input;
 
 		/* Time-based animation using a high-performance counter */
 		// Good example of frame-based animation vs time-based animation: http://blog.sklambert.com/using-time-based-animation-implement/
@@ -261,6 +273,12 @@ void CGameWindow::mainLoop(void *appPointer)
 		current_time = double(li.QuadPart - CounterStart) / PCFreq;
 		delta_time   = current_time - last_time; // Calculate elapsed time
 		last_time    = current_time;             // Update last time to be the current time
+		
+		
+		float frame_actual = 1 * delta_time;
+		ms_Frame.push_back(frame_actual);
+
+
 
 		if (delta_time > 0.0)
 		{
@@ -289,6 +307,9 @@ void CGameWindow::mainLoop(void *appPointer)
 			//
 			accumulator += delta_time;
 
+			QueryPerformanceCounter(&li);
+			last_time_update = double(li.QuadPart - CounterStart) / PCFreq;
+
 			while (accumulator >= dt) {
 				/* Update */
 				((CApp *)appPointer)->update(dt);
@@ -296,19 +317,54 @@ void CGameWindow::mainLoop(void *appPointer)
 				accumulator -= dt;
 			}
 
+			QueryPerformanceCounter(&li);
+			current_time_update = double(li.QuadPart - CounterStart) / PCFreq;
+			delta_time_update = current_time_update - last_time_update;
+			
+
+		}
+
+		double last_time_render, current_time_render, delta_time_render = 0;
+		QueryPerformanceCounter(&li);
+		last_time_render = double(li.QuadPart - CounterStart) / PCFreq;
+
+		/* Render */
+		((CApp *)appPointer)->render();
+
+		QueryPerformanceCounter(&li);
+		current_time_render = double(li.QuadPart - CounterStart) / PCFreq;
+		delta_time_render = current_time_render - last_time_render;
+
 			// Calculate FPS
 			one_second += delta_time;
 			if (one_second > 1000.0)
 			{
+				float ms_Totales = 0;
+				for (int i = 0; i < ms_Frame.size(); i++)
+				{
+					ms_Totales += ms_Frame[i];
+				}
+				ms_Totales = ms_Totales / numFramesRendered;
 				fps = (numFramesRendered / (one_second / 1000.0));
 				one_second -= 1000.0;
 				cout << "fps: " << fps << endl;
+				cout << "Ms/fps:  " << ms_Totales << endl;
 				numFramesRendered = 0;
+				ms_Frame.clear();
+				if (delta_time_input > delta_time_update && delta_time_input > delta_time_render)
+				{
+					cout << "El que mas tardo fue input con: " << delta_time_input << endl;
+				}
+				else if (delta_time_update > delta_time_input && delta_time_update > delta_time_render)
+				{
+					cout << "El que mas tardo fue update con: " << delta_time_update << endl;
+				}
+				else if (delta_time_render > delta_time_input && delta_time_render > delta_time_update)
+				{
+					cout << "El que mas tardo fue render con: " << delta_time_render << endl;
+				}
 			}
-		}
 
-		/* Render */
-		((CApp *)appPointer)->render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(m_Window);
