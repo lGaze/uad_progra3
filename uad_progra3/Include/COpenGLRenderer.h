@@ -80,7 +80,6 @@ private:
 		GLfloat *finalUVCoords,
 		int *numTriangles
 	);
-
 	//
 	bool useShaderProgram(const unsigned int * const shaderProgramId) const;
 

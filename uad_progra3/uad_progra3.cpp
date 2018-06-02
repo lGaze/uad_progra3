@@ -13,11 +13,9 @@ using namespace std;
 
 int main()
 {
-	//C3DModel_STL_Ascii file;
+	
 	CApp *app = NULL;                  // Pointer to BASE class CApp
 	app = new CAppParcial2(800, 600);  // Using pointer to base class, create a new object of DERIVED class CAppParcial2
-	//file.openFile();
-	//system("pause");
 	app->run();                        // Run the app
 	delete app;                        // Delete pointer
 	app = NULL;                        // Set pointer to NULL

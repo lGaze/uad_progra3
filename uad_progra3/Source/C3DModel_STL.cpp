@@ -36,6 +36,7 @@ bool C3DModel_STL::loadFromFile(const char * const filename)
 	cout << "Normals: " << m_numNormals << endl;
 	cout << "UVCoords: " << m_numUVCoords << endl;
 	cout << "Faces: " << m_numFaces << endl;
+	
 
 
 	if (readFileOk)
