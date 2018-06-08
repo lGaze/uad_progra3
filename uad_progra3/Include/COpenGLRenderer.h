@@ -47,9 +47,9 @@ private:
 
 	float m_cameraDistance; // Distance from camera view point to target point, expressed in OpenGL units
 
-	// TEST OBJECT VARS
-	// When no 3D object is loaded, we display a test object (spinning cube)
-	// ===========================
+							// TEST OBJECT VARS
+							// When no 3D object is loaded, we display a test object (spinning cube)
+							// ===========================
 	GLuint m_testCubeShaderProgramID;
 	GLuint m_testCubeVAOID;
 
@@ -73,13 +73,14 @@ private:
 		GLfloat *UVcoords, int numUVCoords,
 		int numIndicesVert,
 		unsigned short *indicesVertices,
-		unsigned short *indicesNormals, 
-		unsigned short *indicesUVCoords, 
+		unsigned short *indicesNormals,
+		unsigned short *indicesUVCoords,
 		GLfloat *finalVertices,
 		GLfloat *finalNormals,
 		GLfloat *finalUVCoords,
 		int *numTriangles
 	);
+
 	//
 	bool useShaderProgram(const unsigned int * const shaderProgramId) const;
 
@@ -115,7 +116,7 @@ public:
 	// =================================================================
 	bool allocateGraphicsMemoryForObject(
 		unsigned int *shaderProgramId,
-		unsigned int *vertexArrayObjectID, 
+		unsigned int *vertexArrayObjectID,
 		GLfloat *vertices, int numVertices,
 		GLfloat *normals, int numNormals,
 		GLfloat *UVcoords, int numUVCoords,
@@ -137,7 +138,7 @@ public:
 	// Free graphics memory for a given 3D object 
 	// =================================================================
 	bool freeGraphicsMemoryForObject(
-		unsigned int *shaderProgramId, 
+		unsigned int *shaderProgramId,
 		unsigned int *vertexArrayObjectID);
 
 	// =================================================================
@@ -160,9 +161,9 @@ public:
 
 	//
 	bool createTextureObject(
-		unsigned int *textureObjectId, 
+		unsigned int *textureObjectId,
 		unsigned char *textureData,
-		int width, 
+		int width,
 		int height);
 
 	// 
@@ -186,7 +187,7 @@ public:
 
 	//
 	bool renderMenuItem(
-		unsigned int *shaderProgramId, 
+		unsigned int *shaderProgramId,
 		unsigned int *textureObjectId,
 		unsigned int *vertexArrayObjectId,
 		GLfloat *menuItemColor);
@@ -233,6 +234,22 @@ public:
 
 	//
 	void drawString(unsigned int *textureObjectId, std::string &text, float x, float y, CVector3 &color);
+
+	//
+	bool isDebugContextEnabled() const;
+
+	//
+	void activateOpenGLDebugging();
+
+	//
+	static void APIENTRY debugOutputCallback(
+		GLenum source,
+		GLenum type,
+		GLuint id,
+		GLenum severity,
+		GLsizei length,
+		const GLchar *message,
+		const GLvoid *userParam);
 };
 
 #endif // !_OPENGL_RENDERER_H

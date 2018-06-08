@@ -11,32 +11,32 @@ using namespace std;
 #include "../Include/CApp.h"
 
 // Initialize static member variables
-bool CGameWindow::requestF1                 = false;
-bool CGameWindow::requestF2                 = false;
-bool CGameWindow::requestF3                 = false;
-bool CGameWindow::requestF4                 = false;
-bool CGameWindow::requestF5                 = false;
-bool CGameWindow::requestF6                 = false;
-bool CGameWindow::requestF7                 = false;
-bool CGameWindow::requestF8                 = false;
-bool CGameWindow::requestF9                 = false;
-bool CGameWindow::requestF10                = false;
-bool CGameWindow::requestF11                = false;
-bool CGameWindow::requestF12                = false;
+bool CGameWindow::requestF1 = false;
+bool CGameWindow::requestF2 = false;
+bool CGameWindow::requestF3 = false;
+bool CGameWindow::requestF4 = false;
+bool CGameWindow::requestF5 = false;
+bool CGameWindow::requestF6 = false;
+bool CGameWindow::requestF7 = false;
+bool CGameWindow::requestF8 = false;
+bool CGameWindow::requestF9 = false;
+bool CGameWindow::requestF10 = false;
+bool CGameWindow::requestF11 = false;
+bool CGameWindow::requestF12 = false;
 
-bool CGameWindow::requestExecuteAction      = false;
+bool CGameWindow::requestExecuteAction = false;
 bool CGameWindow::requestSelectNextMenuItem = false;
 bool CGameWindow::requestSelectPrevMenuItem = false;
-bool CGameWindow::requestArrowUp            = false;
-bool CGameWindow::requestArrowDown          = false;
-bool CGameWindow::requestArrowLeft          = false;
-bool CGameWindow::requestArrowRight         = false;
-int  CGameWindow::keyMods                   = 0;
+bool CGameWindow::requestArrowUp = false;
+bool CGameWindow::requestArrowDown = false;
+bool CGameWindow::requestArrowLeft = false;
+bool CGameWindow::requestArrowRight = false;
+int  CGameWindow::keyMods = 0;
 
-int  CGameWindow::newWidth                  = 0;
-int  CGameWindow::newHeight                 = 0;
-double CGameWindow::stCursorPosX            = 0.0;
-double CGameWindow::stCursorPosY            = 0.0;
+int  CGameWindow::newWidth = 0;
+int  CGameWindow::newHeight = 0;
+double CGameWindow::stCursorPosX = 0.0;
+double CGameWindow::stCursorPosY = 0.0;
 
 /* Default constructor
 */
@@ -45,8 +45,8 @@ CGameWindow::CGameWindow(COpenGLRenderer * renderer) :
 	m_Width{ CGameWindow::DEFAULT_WINDOW_WIDTH },
 	m_Height{ CGameWindow::DEFAULT_WINDOW_HEIGHT },
 	m_InitializedGLFW{ false },
-	m_CursorPosX{0.0},
-	m_CursorPosY{0.0}
+	m_CursorPosX{ 0.0 },
+	m_CursorPosY{ 0.0 }
 {
 	initializeGLFW();
 }
@@ -55,7 +55,7 @@ CGameWindow::CGameWindow(COpenGLRenderer * renderer) :
 */
 CGameWindow::CGameWindow(COpenGLRenderer * renderer, int width, int height) :
 	m_ReferenceRenderer{ renderer },
-	m_Width{ width }, 
+	m_Width{ width },
 	m_Height{ height },
 	m_InitializedGLFW{ false },
 	m_CursorPosX{ 0.0 },
@@ -87,6 +87,11 @@ void CGameWindow::initializeGLFW()
 		//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // OLD FLAG, don't need it because we're asking for CORE profile
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+
+		// Ask for a debug context (only if compiling for a DEBUG configuration)
+#ifdef _DEBUG
+		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+#endif
 	}
 	else
 	{
@@ -138,7 +143,7 @@ bool CGameWindow::create(const char *windowTitle)
 
 	/* Display OpenGL version and OpenGL Shading Language version */
 	cout << "OpenGL version: " << m_ReferenceRenderer->getOpenGLString(GL_VERSION) << endl; // GLVersion.major, GLVersion.minor
-	cout << "GLSL version: "   << m_ReferenceRenderer->getOpenGLString(GL_SHADING_LANGUAGE_VERSION) << endl;
+	cout << "GLSL version: " << m_ReferenceRenderer->getOpenGLString(GL_SHADING_LANGUAGE_VERSION) << endl;
 
 	/* Capture ESC key */
 	glfwSetInputMode(m_Window, GLFW_STICKY_KEYS, GL_TRUE);
@@ -149,14 +154,27 @@ bool CGameWindow::create(const char *windowTitle)
 	/* Cursor position callback */
 	glfwSetCursorPosCallback(m_Window, cursorPositionCallback);
 
+	/* Activate OpenGL debugging if possible (and if compiling for a DEBUG configuration only) */
+	m_ReferenceRenderer->activateOpenGLDebugging();
+
+	/* Check if DEBUG context is enabled */
+	if (m_ReferenceRenderer->isDebugContextEnabled())
+	{
+		cout << "OpenGL DEBUG context ENABLED" << endl;
+	}
+	else
+	{
+		cout << "OpenGL DEBUG context DISABLED" << endl;
+	}
+
 	/*
-     * http://www.glfw.org/docs/latest/input_guide.html#cursor_pos
-	 * "If you wish to implement mouse motion based camera controls or other input schemes that require unlimited mouse movement, 
-	 *  set the cursor mode to GLFW_CURSOR_DISABLED."
-	 *  This will hide the cursor and lock it to the specified window. GLFW will then take care of all the details of cursor re-centering and 
-	 *  offset calculation and providing the application with a virtual cursor position. This virtual position is provided normally via both 
-	 *  the cursor position callback and through polling.
-     */
+	* http://www.glfw.org/docs/latest/input_guide.html#cursor_pos
+	* "If you wish to implement mouse motion based camera controls or other input schemes that require unlimited mouse movement,
+	*  set the cursor mode to GLFW_CURSOR_DISABLED."
+	*  This will hide the cursor and lock it to the specified window. GLFW will then take care of all the details of cursor re-centering and
+	*  offset calculation and providing the application with a virtual cursor position. This virtual position is provided normally via both
+	*  the cursor position callback and through polling.
+	*/
 	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	// Get the desktop resolution.
@@ -175,7 +193,7 @@ bool CGameWindow::create(const char *windowTitle)
 
 		// Get the handle to the console window
 		HWND consoleWindow = GetConsoleWindow();
-		
+
 		// Set the position of the console window
 		if (consoleWindow)
 		{
@@ -186,7 +204,7 @@ bool CGameWindow::create(const char *windowTitle)
 			GetWindowRect(consoleWindow, &r);
 
 			// Set console window dimensions/position
-			MoveWindow(consoleWindow, 
+			MoveWindow(consoleWindow,
 				windowPosXOffset + m_Width + windowPosXOffset,
 				((videoMode->height - (m_Height + extraHeight)) / 2),
 				r.right - r.left, m_Height + extraHeight,
@@ -194,10 +212,10 @@ bool CGameWindow::create(const char *windowTitle)
 
 			// Set console window position
 			/*SetWindowPos(
-				consoleWindow, 0, 
-				m_Width + 20, 
-				((videoMode->height - m_Height) / 2), 
-				0, 0, SWP_NOSIZE | SWP_NOZORDER); */
+			consoleWindow, 0,
+			m_Width + 20,
+			((videoMode->height - m_Height) / 2),
+			0, 0, SWP_NOSIZE | SWP_NOZORDER); */
 		}
 	}
 
@@ -217,19 +235,13 @@ void CGameWindow::mainLoop(void *appPointer)
 	double last_time = 0;
 	double dt = 1000 / 60;  // constant dt step of 1 frame every 60 seconds
 	double accumulator = 0;
-	double current_time, delta_time, last_time_update, delta_time_update, current_time_update, one_second = 0;
+	double current_time, delta_time, one_second = 0;
 	double PCFreq = 0.0;
 	double fps = 0.0;
 	__int64 CounterStart = 0;
 	int numFramesRendered = 0;
 	float deltaCursorPosX = 0.0f, deltaCursorPosY = 0.0f;
 	LARGE_INTEGER li;
-
-	vector<float> ms_Frame;
-	vector<float> delta_input;
-	vector<float> delta_update;
-	vector<float> delta_render;
-	
 
 	if (m_Window == NULL || appPointer == NULL || m_ReferenceRenderer == NULL)
 		return;
@@ -258,30 +270,15 @@ void CGameWindow::mainLoop(void *appPointer)
 		/* Clear color and depth buffer */
 		m_ReferenceRenderer->clearScreen();
 
-		double last_time_input, current_time_input, delta_time_input = 0;
-		QueryPerformanceCounter(&li);
-		last_time_input = double(li.QuadPart - CounterStart) / PCFreq;
-
 		/* Process user input */
 		processInput(appPointer);
-
-		QueryPerformanceCounter(&li);
-		current_time_input = double(li.QuadPart - CounterStart) / PCFreq;
-		delta_time_input = current_time_input - last_time_input;
-		delta_input.push_back(delta_time_input);
 
 		/* Time-based animation using a high-performance counter */
 		// Good example of frame-based animation vs time-based animation: http://blog.sklambert.com/using-time-based-animation-implement/
 		QueryPerformanceCounter(&li);
 		current_time = double(li.QuadPart - CounterStart) / PCFreq;
-		delta_time   = current_time - last_time; // Calculate elapsed time
-		last_time    = current_time;             // Update last time to be the current time
-		
-		
-		float frame_actual = 1 * delta_time;
-		ms_Frame.push_back(frame_actual);
-
-
+		delta_time = current_time - last_time; // Calculate elapsed time
+		last_time = current_time;             // Update last time to be the current time
 
 		if (delta_time > 0.0)
 		{
@@ -310,9 +307,6 @@ void CGameWindow::mainLoop(void *appPointer)
 			//
 			accumulator += delta_time;
 
-			QueryPerformanceCounter(&li);
-			last_time_update = double(li.QuadPart - CounterStart) / PCFreq;
-
 			while (accumulator >= dt) {
 				/* Update */
 				((CApp *)appPointer)->update(dt);
@@ -320,79 +314,19 @@ void CGameWindow::mainLoop(void *appPointer)
 				accumulator -= dt;
 			}
 
-			QueryPerformanceCounter(&li);
-			current_time_update = double(li.QuadPart - CounterStart) / PCFreq;
-			delta_time_update = current_time_update - last_time_update;
-			delta_update.push_back(delta_time_update);
-			
-
-		}
-
-		double last_time_render, current_time_render, delta_time_render = 0;
-		QueryPerformanceCounter(&li);
-		last_time_render = double(li.QuadPart - CounterStart) / PCFreq;
-
-		/* Render */
-		((CApp *)appPointer)->render();
-
-		QueryPerformanceCounter(&li);
-		current_time_render = double(li.QuadPart - CounterStart) / PCFreq;
-		delta_time_render = current_time_render - last_time_render;
-		delta_render.push_back(delta_time_render);
-
 			// Calculate FPS
 			one_second += delta_time;
 			if (one_second > 1000.0)
 			{
-				float ms_Totales = 0;
-				float ms_Totales_input = 0;
-				float ms_Totales_update = 0;
-				float ms_Totales_render = 0;
-				for (int i = 0; i < ms_Frame.size(); i++)
-				{
-					ms_Totales += ms_Frame[i];
-				}
-
-				ms_Totales = ms_Totales / numFramesRendered;
 				fps = (numFramesRendered / (one_second / 1000.0));
 				one_second -= 1000.0;
 				cout << "fps: " << fps << endl;
-				cout << "Ms/fps:  " << ms_Totales << endl;
 				numFramesRendered = 0;
-				ms_Frame.clear();
-
-				for (int i = 0; i < delta_input.size(); i++)
-				{
-					ms_Totales_input += delta_input[i];
-				}
-				ms_Totales_input = ms_Totales_input / delta_input.size();
-
-				for (int i = 0; i < delta_update.size(); i++)
-				{
-					ms_Totales_update += delta_update[i];
-				}
-				ms_Totales_update = ms_Totales_update / delta_update.size();
-
-				for (int i = 0; i < delta_render.size(); i++)
-				{
-					ms_Totales_render += delta_render[i];
-				}
-				ms_Totales_render = ms_Totales_render / delta_render.size();
-
-				if (ms_Totales_input > ms_Totales_update && ms_Totales_input > ms_Totales_render)
-				{
-					cout << "El que mas tardo fue input con: " << ms_Totales_input << endl;
-				}
-				else if (ms_Totales_update > ms_Totales_input && ms_Totales_update > ms_Totales_render)
-				{
-					cout << "El que mas tardo fue update con: " << ms_Totales_update << endl;
-				}
-				else if (ms_Totales_render > ms_Totales_input && ms_Totales_render > ms_Totales_update)
-				{
-					cout << "El que mas tardo fue render con: " << ms_Totales_render << endl;
-				}
 			}
+		}
 
+		/* Render */
+		((CApp *)appPointer)->render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(m_Window);
@@ -460,26 +394,26 @@ void CGameWindow::keyboardCallback(GLFWwindow * window, int key, int scancode, i
 		case GLFW_KEY_F12:
 			CGameWindow::requestF12 = true;
 			break;
-		// ARROW DOWN key selects the next menu item if menu is active, application-specific otherwise
+			// ARROW DOWN key selects the next menu item if menu is active, application-specific otherwise
 		case GLFW_KEY_DOWN:
 			CGameWindow::requestSelectNextMenuItem = true;
 			CGameWindow::requestArrowDown = true;
 			break;
-		// ARROW UP key selects the prev menu item if menu is active, application-specific otherwise
+			// ARROW UP key selects the prev menu item if menu is active, application-specific otherwise
 		case GLFW_KEY_UP:
 			CGameWindow::requestSelectPrevMenuItem = true;
 			CGameWindow::requestArrowUp = true;
 			break;
-		// ARROW LEFT, app-specific
+			// ARROW LEFT, app-specific
 		case GLFW_KEY_LEFT:
 			CGameWindow::requestArrowLeft = true;
 			break;
-		// ARROW RIGHT, app-specific
+			// ARROW RIGHT, app-specific
 		case GLFW_KEY_RIGHT:
 			CGameWindow::requestArrowRight = true;
 			break;
-		// ARROW RIGHT, app-specific
-		// ENTER key executes the current menu item action
+			// ARROW RIGHT, app-specific
+			// ENTER key executes the current menu item action
 		case GLFW_KEY_ENTER:
 			CGameWindow::requestExecuteAction = true;
 			break;
@@ -632,7 +566,7 @@ void CGameWindow::processInput(void *appPointer)
 		}
 		else
 		{
-			CGameWindow::requestExecuteAction      = false;
+			CGameWindow::requestExecuteAction = false;
 			CGameWindow::requestSelectNextMenuItem = false;
 			CGameWindow::requestSelectPrevMenuItem = false;
 

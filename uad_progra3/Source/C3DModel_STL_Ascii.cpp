@@ -137,9 +137,9 @@ bool C3DModel_STL_Ascii::openFile(const char * const filename)
 	char normalDelim = 'l';
 	char vertexDelim = 'x';
 	int faces = 0;
-	
+
 	//Open the file 
-	file.open(filename, ios::in);            
+	file.open(filename, ios::in);
 
 
 	if (file.fail())
@@ -148,17 +148,24 @@ bool C3DModel_STL_Ascii::openFile(const char * const filename)
 		return false;
 
 	}
-	
+
 	//First pass to count the faces
 	while (!file.eof())
 	{
 		std::getline(file, textLine);
-		if (textLine[0] == 'f')
+		istringstream ss(textLine);
+
+		do
+		{
+			std::getline(ss, token, ' ');
+		} while (token == "" && !ss.eof());
+
+		if (token[0] == 'f')
 		{
 			faces++;
 		}
 	}
-	
+
 	//Allocate memory 
 	m_numFaces = faces;
 	m_numNormals = m_numFaces;
@@ -170,7 +177,7 @@ bool C3DModel_STL_Ascii::openFile(const char * const filename)
 	m_UVcoords = new CVector3[m_numUVCoords];
 
 	//Raw
-	m_verticesRaw = new float[m_numVertices * 3]; 
+	m_verticesRaw = new float[m_numVertices * 3];
 	m_normalsRaw = new float[m_numFaces * 3];
 	m_uvCoordsRaw = new float[m_numUVCoords * 2];
 
@@ -179,7 +186,7 @@ bool C3DModel_STL_Ascii::openFile(const char * const filename)
 	m_normalIndices = new unsigned short[m_numVertices];
 	m_UVindices = new unsigned short[m_numVertices];
 
-	
+
 
 	file.clear();
 	file.seekg(0, ios::beg);
@@ -194,12 +201,16 @@ bool C3DModel_STL_Ascii::openFile(const char * const filename)
 	while (!file.eof())
 	{
 		std::getline(file, textLine);
+		istringstream ss(textLine);
+
+		do
+		{
+			std::getline(ss, token, ' ');
+		} while (token == "" && !ss.eof());
 
 		//Normals
-		if (textLine[0] == 'f')
+		if (token[0] == 'f')
 		{
-			istringstream ss(textLine);
-			std::getline(ss, token, ' ');
 			std::getline(ss, token, ' ');
 			std::getline(ss, token, ' ');
 			float x = stof(token);
@@ -220,16 +231,9 @@ bool C3DModel_STL_Ascii::openFile(const char * const filename)
 		}
 
 		//Vertex
-		else if (textLine[4] == 'v')
+		else if (token[0] == 'v')
 		{
-			istringstream ss(textLine);
 			std::getline(ss, token, ' ');
-			std::getline(ss, token, ' ');
-			std::getline(ss, token, ' ');
-			std::getline(ss, token, ' ');
-			std::getline(ss, token, ' ');
-			std::getline(ss, token, ' ');
-
 			float x = stof(token);
 			m_verticesRaw[indiceVertex++] = x;
 
