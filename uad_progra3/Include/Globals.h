@@ -6,7 +6,9 @@
 // WINDOW TITLES
 #define CAPPPARCIAL1_WINDOW_TITLE "OpenGL + GLFW Library test"
 #define CAPPPARCIAL2_WINDOW_TITLE "Load 3D Object Test"
+
 #define CAPPPARCIAL3_WINDOW_TITLE "Parcial 3"
+#define CAPPHEXGRID_WINDOW_TITLE "Hex Grid"
 
 // SHADER FILENAMES
 #define VERTEX_SHADER_TEST_OBJECT				"SHADERS\\glsl_testobject.vert"
