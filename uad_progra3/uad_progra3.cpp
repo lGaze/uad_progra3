@@ -9,6 +9,7 @@ using namespace std;
 #include "Include/CGameWindow.h"
 #include "Include/CApp.h"
 #include "Include/CAppParcial2.h"
+#include "STLLoader.h" 
 
 int main()
 {
