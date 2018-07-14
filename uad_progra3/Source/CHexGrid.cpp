@@ -19,14 +19,22 @@ CHexGrid::~CHexGrid()
 
 void CHexGrid::buildGrid(float cellsize)
 {
-	int k = -1;
+	int vertIterator = 0;
+	int vertIndexIterator = 0;
 	float radio = sqrt(3)*(cellsize / 2);
 	float Centro_X, Centro_Y;
+	int singleHexIndices[] = 
+	{
+		2,1,0,
+		3,5,4,
+		3,0,5,
+		2,0,3
+	};
 	
 	m_pCeldas[0][0] = new CHexCell(First_CenterX, First_CenterY);
 
 	Vertex = new float [GRID_SIZE * GRID_SIZE * 3 * 6]; //vraw
-
+	
 	for (int i = 0; i < GRID_SIZE; i++)
 	{
 		for (int j = 0; j < GRID_SIZE; j++)
@@ -37,57 +45,28 @@ void CHexGrid::buildGrid(float cellsize)
 			m_pCeldas[i][j] = new CHexCell(Centro_X, Centro_Y);
 			m_pCeldas[i][j]->CalculateVert(radio,cellsize);
 
-			Vertex[++k] = m_pCeldas[i][j]->Vert[0].getX();
-			cout << Vertex[k] <<" , ";
-			Vertex[++k] = m_pCeldas[i][j]->Vert[0].getY();
-			cout << Vertex[k] << " , ";
-			Vertex[++k] = m_pCeldas[i][j]->Vert[0].getZ();
-			cout << Vertex[k] << " ,, ";
-			Vertex[++k] = m_pCeldas[i][j]->Vert[1].getX();
-			cout << Vertex[k] << " , ";
-			Vertex[++k] = m_pCeldas[i][j]->Vert[1].getY();
-			cout << Vertex[k] << " , ";
-			Vertex[++k] = m_pCeldas[i][j]->Vert[1].getZ();
-			cout << Vertex[k] << " ,,";
-			Vertex[++k] = m_pCeldas[i][j]->Vert[2].getX();
-			cout << Vertex[k] << " , ";
-			Vertex[++k] = m_pCeldas[i][j]->Vert[2].getY();
-			cout << Vertex[k] << " , ";
-			Vertex[++k] = m_pCeldas[i][j]->Vert[2].getZ();
-			cout << Vertex[k] << " ,, ";
-			Vertex[++k] = m_pCeldas[i][j]->Vert[3].getX();
-			cout << Vertex[k] << " , ";
-			Vertex[++k] = m_pCeldas[i][j]->Vert[3].getY();
-			cout << Vertex[k] << " , ";
-			Vertex[++k] = m_pCeldas[i][j]->Vert[3].getZ();
-			cout << Vertex[k] << " ,, ";
-			Vertex[++k] = m_pCeldas[i][j]->Vert[4].getX();
-			cout << Vertex[k] << " , ";
-			Vertex[++k] = m_pCeldas[i][j]->Vert[4].getY();
-			cout << Vertex[k] << " , ";
-			Vertex[++k] = m_pCeldas[i][j]->Vert[4].getZ();
-			cout << Vertex[k] << " ,, ";
-			Vertex[++k] = m_pCeldas[i][j]->Vert[5].getX();
-			cout << Vertex[k] << " , ";
-			Vertex[++k] = m_pCeldas[i][j]->Vert[5].getY();
-			cout << Vertex[k] << " , ";
-			Vertex[++k] = m_pCeldas[i][j]->Vert[5].getZ();
-			cout << Vertex[k] << " ,, ";
-			
+			for (int k = 0; k < 6; k++)
+			{
+				Vertex[vertIterator++] = m_pCeldas[i][j]->Vert[k].getX();
+				
+				Vertex[vertIterator++] = m_pCeldas[i][j]->Vert[k].getY();
+				
+				Vertex[vertIterator++] = m_pCeldas[i][j]->Vert[k].getZ();
+				
+			}
+
 			for (int l = 0; l < 4*3; l++)
 			{
-				vindex[l++] = (i * GRID_SIZE * 6 + j * 6);
-				vindex[l++] = (i * GRID_SIZE * 6 + j * 6 + l + 1);
-				vindex[l++] = (i * GRID_SIZE * 6 + j * 6 + l + 2);
-			}
-							
+				vindex[vertIndexIterator++] = 
+					(i * GRID_SIZE * 6 + j * 6 + singleHexIndices[l]);
+			}				
 		}
-		
 	}
 }
 
-void CHexGrid::initialize(COpenGLRenderer * render)
+bool CHexGrid::initialize(COpenGLRenderer * render)
 {
+	buildGrid(1.0);
 	std::wstring wresourceFilenameVS;
 	std::wstring wresourceFilenameFS;
 	std::string resourceFilenameVS;
@@ -102,12 +81,23 @@ void CHexGrid::initialize(COpenGLRenderer * render)
 		cout << "ERROR: Unable to find one or more resources: " << endl;
 		cout << "  " << VERTEX_SHADER_WIREFRAME << endl;
 		cout << "  " << FRAGMENT_SHADER_WIREFRAME << endl;
-		return;
+		return false;
 	}
 
 	render->createShaderProgram(&WireframeID, resourceFilenameVS.c_str(), resourceFilenameFS.c_str());
 
 	//Allocate Memory
-	render->allocateGraphicsMemoryForObject(WireframeID, &ArrayID, Vertex, GRID_SIZE*GRID_SIZE * 6, &vindex, GRID_SIZE*GRID_SIZE * 4);
-	
+	render->allocateGraphicsMemoryForObject(&WireframeID, &ArrayID, Vertex, GRID_SIZE*GRID_SIZE * 6, vindex, GRID_SIZE*GRID_SIZE * 4 * 3);
+
+	return true;
+}
+
+unsigned int* CHexGrid::getWireframeID()
+{
+	return &WireframeID;
+}
+
+unsigned int* CHexGrid::getArrayID()
+{
+	return &ArrayID;;
 }

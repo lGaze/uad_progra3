@@ -16,10 +16,6 @@ using namespace std;
 
 int main()
 {
-	CHexGrid Grid;
-	Grid.buildGrid(1.0);
-	system("pause");
-
 	CApp *app = NULL;                  // Pointer to BASE class CApp
 	app = new CAppGrid(800, 600);  // Using pointer to base class, create a new object of DERIVED class CAppParcial2
 	app->run();                        // Run the app

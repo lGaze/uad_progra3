@@ -31,7 +31,7 @@ void CHexCell::CalculateVert(float radio,float cellsize)
 	//cout << Point3_x << "," << Point3_y << endl;
 	//Point4
 	float Point4_x = centro_X;
-	float Point4_y = centro_Y + radio;
+	float Point4_y = centro_Y + cellsize;
 	Vert[3].setValues(Point4_x, 0, Point4_y);
 	//cout << Point4_x << "," << Point4_y << endl;
 	//Point5

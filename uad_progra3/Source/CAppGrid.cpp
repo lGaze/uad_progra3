@@ -6,6 +6,8 @@
 CAppGrid::CAppGrid()
 {
 	cout << "Constructor: CAppGrid()" << endl;
+
+	m_pWorld = new CWorld();
 }
 
 /* */
@@ -13,6 +15,8 @@ CAppGrid::CAppGrid(int window_width, int window_height) :
 	CApp(window_width, window_height)
 {
 	cout << "Constructor: CAppGrid(int window_width, int window_height)" << endl;
+
+	m_pWorld = new CWorld();
 }
 
 CAppGrid::~CAppGrid()
@@ -30,8 +34,6 @@ bool CAppGrid::initializeMenu()
 void CAppGrid::initialize()
 {
 	// initialize del world
-	m_pWorld = new CWorld();
-	//m_pWorld->initialize();
 }
 
 void CAppGrid::update(double deltaTime)
@@ -55,8 +57,9 @@ void CAppGrid::run()
 			getOpenGLRenderer()->setWindowHeight(getGameWindow()->getHeight());
 			// Initialize a test cube
 			getOpenGLRenderer()->initializeTestObjects();
-
 			// Create our menu (add all menu items)
+
+			m_pWorld->initialize(getOpenGLRenderer());
 			if (!initializeMenu())
 			{
 				return;
@@ -84,7 +87,7 @@ void CAppGrid::render()
 		float color[3] = { 1.0f, 1.0f, 1.0f };
 
 		// render del world
-
+		m_pWorld->render();
 		/*
 		if (m_p3DModel != NULL && m_p3DModel->isInitialized())
 		{
