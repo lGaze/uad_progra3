@@ -1,5 +1,6 @@
 #pragma once
 #include "CVector3.h"
+//#define POINTY
 
 class CHexCell
 {

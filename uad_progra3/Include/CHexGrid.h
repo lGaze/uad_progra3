@@ -7,7 +7,7 @@
 #include "CWideStringHelper.h"
 #include "Globals.h"
 using namespace std;
-#define GRID_SIZE 10
+#define GRID_SIZE 1
 
 class CHexGrid
 {
@@ -31,4 +31,5 @@ private:
 	unsigned short vindex[4 * 3 * GRID_SIZE*GRID_SIZE];
 	unsigned int WireframeID;
 	unsigned int ArrayID;
+	void reset();
 };

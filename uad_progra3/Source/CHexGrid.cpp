@@ -25,10 +25,15 @@ void CHexGrid::buildGrid(float cellsize)
 	float Centro_X, Centro_Y;
 	int singleHexIndices[] = 
 	{
-		2,1,0,
-		3,5,4,
-		3,0,5,
-		2,0,3
+		//2,1,0,
+		//3,5,4,
+		//3,0,5,
+		//2,0,3
+
+		0,2,4,1,5,3,
+		0,1,5,1,2,3,
+		3,4,5  //el diablo
+
 	};
 	
 	m_pCeldas[0][0] = new CHexCell(First_CenterX, First_CenterY);
@@ -39,11 +44,18 @@ void CHexGrid::buildGrid(float cellsize)
 	{
 		for (int j = 0; j < GRID_SIZE; j++)
 		{
-
+	#ifdef POINTY
 			Centro_X = First_CenterX + (i % 2)*radio + 2 * j*radio;
 			Centro_Y = First_CenterY + i * ((3 * cellsize) / 2);
+			
+	#else
+			Centro_X = First_CenterX + j*((3 * cellsize) / 2);
+			Centro_Y = First_CenterY + (j % 2)*radio + 2 * i*radio;
+			
+
+	#endif
 			m_pCeldas[i][j] = new CHexCell(Centro_X, Centro_Y);
-			m_pCeldas[i][j]->CalculateVert(radio,cellsize);
+			m_pCeldas[i][j]->CalculateVert(radio, cellsize);
 
 			for (int k = 0; k < 6; k++)
 			{
@@ -66,7 +78,7 @@ void CHexGrid::buildGrid(float cellsize)
 
 bool CHexGrid::initialize(COpenGLRenderer * render)
 {
-	buildGrid(1.0);
+	buildGrid(5.0);
 	std::wstring wresourceFilenameVS;
 	std::wstring wresourceFilenameFS;
 	std::string resourceFilenameVS;
@@ -100,4 +112,8 @@ unsigned int* CHexGrid::getWireframeID()
 unsigned int* CHexGrid::getArrayID()
 {
 	return &ArrayID;;
+}
+
+void CHexGrid::reset()
+{
 }
