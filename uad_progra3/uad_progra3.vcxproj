@@ -185,6 +185,8 @@
     <ClInclude Include="Include\CHexGrid.h" />
     <ClInclude Include="Include\COpenGLRenderer.h" />
     <ClInclude Include="Include\COpenGLShaderProgram.h" />
+    <ClInclude Include="Include\CQuadtree.h" />
+    <ClInclude Include="Include\CQuadtreeNode.h" />
     <ClInclude Include="Include\CVector3.h" />
     <ClInclude Include="Include\CWideStringHelper.h" />
     <ClInclude Include="Include\CWorld.h" />
@@ -219,6 +221,8 @@
     <ClCompile Include="Source\CHexGrid.cpp" />
     <ClCompile Include="Source\COpenGLRenderer.cpp" />
     <ClCompile Include="Source\COpenGLShaderProgram.cpp" />
+    <ClCompile Include="Source\CQuadtree.cpp" />
+    <ClCompile Include="Source\CQuadtreeNode.cpp" />
     <ClCompile Include="Source\CVector3.cpp" />
     <ClCompile Include="Source\CWorld.cpp" />
     <ClCompile Include="Source\LoadShaders.cpp" />
