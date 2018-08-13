@@ -16,11 +16,12 @@ bool CWorld::initialize(COpenGLRenderer* renderer)
 	
 }
 
-void CWorld::render()
+void CWorld::render(CVector3 CamPosition)
 {
 	float c[3] = { 204.0f, 0.0f, 51.0f };
-	MathHelper::Matrix4 modelMatrix = MathHelper::ModelMatrix((float)0, CVector3(-10, -10, -20));
-	//MthHelper::Matrix4 modelMatrix = MathHelper::ModelMatrix((float)totalDegreesRotatedRadians, m_objectPosition);
+
+	MathHelper::Matrix4 modelMatrix = MathHelper::ModelMatrix((float)0, CamPosition);
+
 	renderer->renderWireframeObject(
 		Grid->getWireframeID(),
 		Grid->getArrayID(),
@@ -29,3 +30,4 @@ void CWorld::render()
 		&modelMatrix
 	);
 }
+

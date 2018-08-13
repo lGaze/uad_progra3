@@ -7,7 +7,7 @@
 #include "CWideStringHelper.h"
 #include "Globals.h"
 using namespace std;
-#define GRID_SIZE 1
+#define GRID_SIZE 70
 
 class CHexGrid
 {

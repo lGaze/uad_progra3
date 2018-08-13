@@ -1,9 +1,9 @@
 #include "..\Include\CAppGrid.h"
+#include "../Include/LoadTGA.h"
 
 
-
-
-CAppGrid::CAppGrid()
+CAppGrid::CAppGrid():
+	m_CmPosition(0,0,0)
 {
 	cout << "Constructor: CAppGrid()" << endl;
 
@@ -22,6 +22,51 @@ CAppGrid::CAppGrid(int window_width, int window_height) :
 CAppGrid::~CAppGrid()
 {
 	cout << "Destructor: ~CAppGrid()" << endl;
+}
+
+bool CAppGrid::loadTexture(const char * filename, unsigned int * newTextureID)
+{
+	TGAFILE tgaFile;
+	tgaFile.imageData = nullptr;
+
+	if (filename == nullptr || newTextureID == nullptr)
+	{
+		return false;
+	}
+
+	*newTextureID = 0;
+
+	if (LoadTGAFile(filename, &tgaFile))
+	{
+		if (tgaFile.imageData == nullptr ||
+			tgaFile.imageHeight < 0 ||
+			tgaFile.imageWidth < 0)
+		{
+			if (tgaFile.imageData != nullptr)
+			{
+				delete[] tgaFile.imageData;
+			}
+
+			return false;
+		}
+
+		// Create a texture object for the menu, and copy the texture data to graphics memory
+		if (!getOpenGLRenderer()->createTextureObject(
+			newTextureID,
+			tgaFile.imageData,
+			tgaFile.imageWidth,
+			tgaFile.imageHeight
+		))
+		{
+			return false;
+		}
+
+		// Texture data is stored in graphics memory now, we don't need this copy anymore
+		if (tgaFile.imageData != nullptr)
+		{
+			delete[] tgaFile.imageData;
+		}
+	}
 }
 
 bool CAppGrid::initializeMenu()
@@ -85,10 +130,9 @@ void CAppGrid::render()
 	{
 		// White 
 		float color[3] = { 1.0f, 1.0f, 1.0f };
-
+		
 		// render del world
-		m_pWorld->render();
-		/*
+		m_pWorld->render(m_CmPosition);		/*
 		if (m_p3DModel != NULL && m_p3DModel->isInitialized())
 		{
 			// convert total degrees rotated to radians;
@@ -122,5 +166,21 @@ void CAppGrid::onMouseMove(float deltaX, float deltaY)
 {
 	if (deltaX < 100.0f && deltaY < 100.0f)
 	{
+		float moveX = -deltaX * DEFAULT_CAMERA_MOVE_SPEED;
+		float moveZ = -deltaY * DEFAULT_CAMERA_MOVE_SPEED;
+
+		float currPos[3];
+		m_CmPosition.getValues(currPos);
+		currPos[0] += moveX;
+		currPos[2] += moveZ;
+		m_CmPosition.setValues(currPos);
+	}
+}
+
+void CAppGrid::moveCamera(float direction)
+{
+	if (getOpenGLRenderer() != NULL)
+	{
+		getOpenGLRenderer()->moveCamera(direction);
 	}
 }

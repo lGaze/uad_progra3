@@ -7,6 +7,8 @@
 #include "CVector3.h"
 #include "..\Include\CWorld.h"
 
+#define DEFAULT_ROTATION_SPEED 90.0f
+#define DEFAULT_CAMERA_MOVE_SPEED 0.015f
 
 // Class that inherits from Base class CApp
 // Base class CApp has members for: CGameWindow, CGameMenu, and COpenGLRenderer, which we can access through the public/protected methods
@@ -14,6 +16,9 @@ class CAppGrid : public CApp
 {
 private:
 	CWorld *m_pWorld;
+	bool loadTexture(const char *filename, unsigned int *newTextureID);
+	CVector3 m_CmPosition;
+	void moveCamera(float direction);
 
 protected:
 	// Method to initialize the menu
@@ -45,8 +50,8 @@ public:
 
 	// Methods specific to CAppParcial2 only
 	// -------------------------------------
-
 	void onMouseMove(float deltaX, float deltaY);
+
 };
 
 #endif // !CAPPGRID_H
