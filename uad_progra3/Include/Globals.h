@@ -32,6 +32,6 @@
 // TEXTURE FILENAMES
 #define MENU_TEXTURE_FILE              "TEXTURES\\Menu.tga"
 #define MENU_TEXTURE_FILE_EXAMEN_FINAL "TEXTURES\\MenuExamenFinal.tga"
-#define MC_CUBE_TEXTURE                "TEXTURES\\Nieve.tga"
-
+#define MC_CUBE_TEXTURE                "TEXTURES\\mc_grass_dirt_cube_512x384.tga"
+#define PASTO_TEXTURE				   "TEXTURES\\Pasto.tga"
 #endif // !_GLOBALS_H

@@ -3,7 +3,7 @@
 
 
 CAppGrid::CAppGrid():
-	m_CmPosition(0,0,0)
+	m_CmPosition(-5,-5,-7)
 {
 	cout << "Constructor: CAppGrid()" << endl;
 
@@ -77,8 +77,8 @@ bool CAppGrid::initializeMenu()
 }
 
 void CAppGrid::initialize()
-{
-	// initialize del world
+{	
+	
 }
 
 void CAppGrid::update(double deltaTime)

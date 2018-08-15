@@ -16,9 +16,10 @@ class CAppGrid : public CApp
 {
 private:
 	CWorld *m_pWorld;
-	bool loadTexture(const char *filename, unsigned int *newTextureID);
+	bool loadTexture(const char *filename, unsigned int *newTexture);
 	CVector3 m_CmPosition;
 	void moveCamera(float direction);
+	unsigned int textureID;
 
 protected:
 	// Method to initialize the menu
