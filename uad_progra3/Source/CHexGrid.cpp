@@ -12,7 +12,7 @@ CHexGrid::CHexGrid() :
 	Vertex(0),
 	VertexTexturas(0),
 	ArrayID(0),
-	m_textureId(0)
+	VaoId(0)
 
 {
 
@@ -91,8 +91,11 @@ void CHexGrid::buildGrid(float cellsize)
 	}
 }
 
+
+
 bool CHexGrid::initialize(COpenGLRenderer * render)
 {
+	
 	buildGrid(5.0);
 	std::wstring wresourceFilenameVS;
 	std::wstring wresourceFilenameFS;
@@ -125,11 +128,11 @@ bool CHexGrid::initialize(COpenGLRenderer * render)
 	}*/
 
 	render->createShaderProgram(&WireframeID, resourceFilenameVS.c_str(), resourceFilenameFS.c_str());
-	//render->createShaderProgram(&m_ShaderProgramId,resourceFilenameVStexture.c_str(), resourceFilenameFStexture.c_str());
+	
 
 	//Allocate Memory
 	render->allocateGraphicsMemoryForObject(&WireframeID, &ArrayID, Vertex, GRID_SIZE*GRID_SIZE * 6, vindex, GRID_SIZE*GRID_SIZE * 4 * 3);
-	//render->allocateGraphicsMemoryForObject(&m_ShaderProgramId, &m_textureId, VertexTexturas, GRID_SIZE*GRID_SIZE * 6, vindexTex, GRID_SIZE*GRID_SIZE * 4 * 3);
+	
 
 	return true;
 }
@@ -149,9 +152,9 @@ unsigned int * CHexGrid::getWireframeIDtex()
 	return &m_ShaderProgramId;
 }
 
-unsigned int * CHexGrid::getArrayIDtex()
+unsigned int * CHexGrid::getVaoIDtex()
 {
-	return &m_textureId;									
+	return &VaoId;									
 
 }
 

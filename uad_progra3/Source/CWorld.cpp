@@ -15,6 +15,73 @@ bool CWorld::initialize(COpenGLRenderer* renderer)
 {
 	this->renderer = renderer;
 	initializeTexture();
+	GLfloat vertexPositions[] =
+	{
+		2.5f,0.0f,-4.3f,
+		5.0f,0.0f,0.0f,
+		2.5f,0.0f,4.3f,
+	  - 2.5f,0.0f,4.3f,
+	  - 5.0f,0.0f,0.0f,
+	  - 2.5f,0.0f,-4.3f
+	};
+
+	GLfloat vertexUVs[] =
+	{
+		2.5,-4.3,
+		5,0,
+		2.5,4.3,
+	  - 2.5,4.3,
+	  - 5,0,
+	  - 2.5,-4.3
+	};
+
+	GLfloat normals[] =
+	{
+		0.0f,1.0f,0.0f,
+		0.0f,1.0f,0.0f,
+		0.0f,1.0f,0.0f,
+		0.0f,1.0f,0.0f,
+		0.0f,1.0f,0.0f,
+		0.0f,1.0f,0.0f
+	};
+
+	unsigned short indices[] =
+	{
+		2,1,0,
+		3,5,4,
+		3,0,5,
+		2,0,3
+	};
+
+	unsigned short normlindices[] =
+	{
+		0,0,0,0,0,0,0,0,0,0,0,0
+	};
+
+	unsigned short UVcoords[] =
+	{
+		2,1,0,
+		3,5,4,
+		3,0,5,
+		2,0,3
+	};
+		
+
+	renderer->allocateGraphicsMemoryForObject(&ShaderProgramID, 
+		                                      Grid->getVaoIDtex(),
+		                                      vertexPositions, 
+		                                      6, 
+											  normals,
+											  1,
+		                                      vertexUVs, 
+											  6,
+											  indices,
+											  12,
+											  normlindices,
+											  12,
+											  UVcoords,
+											  12);
+
 	return Grid->initialize(renderer);
 	
 }
@@ -23,28 +90,35 @@ bool CWorld::initialize(COpenGLRenderer* renderer)
 
 void CWorld::render(CVector3 CamPosition)
 {
-	float c[3] = { 204.0f, 0.0f, 51.0f };
-	float b[3] = { 256, 0.0f, 256 };
+	float c[3] = { 1.0f, 1.0f, 1.0f };
+	float b[3] = { 0.0f, 0.0f, 0.0f };
 	
+	
+	CVector3 CamPosition2 = CamPosition;
+	CamPosition2.Y -= 0.4f;
 
 	MathHelper::Matrix4 modelMatrix = MathHelper::ModelMatrix((float)0, CamPosition);
+	MathHelper::Matrix4 modelMatrix2 = MathHelper::ModelMatrix((float)0, CamPosition2);
+
 
 	//renderer->renderWireframeObject(
 	//	Grid->getWireframeID(),
 	//	Grid->getArrayID(),
 	//	4 * GRID_SIZE*GRID_SIZE,
-	//	b,
+	//	c,
 	//	&modelMatrix
 	//);
 
 
 	renderer->renderObject(
 		&ShaderProgramID,
-		Grid->getArrayID(),
+		Grid->getVaoIDtex(),
 		&m_TextureID,
 		4 * GRID_SIZE*GRID_SIZE,
 		b,
-		&modelMatrix
+		&modelMatrix2,
+		COpenGLRenderer::EPRIMITIVE_MODE::TRIANGLES,
+		true
 	);
 	
 }
@@ -160,38 +234,8 @@ void CWorld::initializeHexTexture()
 
 		
 
-		// Test cube geometry.
-		GLfloat vertexPositions[] =
-		{
-			0.75f, 0.0, 0.0f,
-			1.0f , 0.0, 0.5f,
-			0.75f, 0.0, 0.9330127019f,
-			0.25f, 0.0, 0.9330127019f,
-			0.0f , 0.0, 0.5f,
-			0.25f, 0.0, 0.06698729811f
-		};
-
 		
-
-		GLfloat vertexUVs[] =
-		{
-			0.75f, 0.0f,
-			1.0f, 0.5f,
-			0.75f, 0.9330127019f,
-			0.25f, 0.9330127019f,
-			0.0f, 0.5f,
-			0.25f, 0.06698729811f
-		};
-
-
-		short indices[] =
-		{
-			2,1,0,
-			3,5,4,
-			3,0,5,
-			2,0,3
-		};
-
+		
 	}
 
 }

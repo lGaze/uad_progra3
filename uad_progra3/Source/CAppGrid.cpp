@@ -3,7 +3,7 @@
 
 
 CAppGrid::CAppGrid():
-	m_CmPosition(-5,-5,-7)
+	m_CmPosition(0,0,0)
 {
 	cout << "Constructor: CAppGrid()" << endl;
 
@@ -88,7 +88,7 @@ void CAppGrid::update(double deltaTime)
 void CAppGrid::run()
 {
 	initialize();
-
+	
 	// Check if CGameWindow object and window library been initialized
 	if (canRun())
 	{
